@@ -1,0 +1,188 @@
+<div class="container">
+    <br>
+    <div class="row g-3">
+        <div class="col-lg-3"> <!-- Columna Botón -->
+            <button type="button" class="btn btn-success" (click)="toggleFormulario()">
+              {{ mostrarFormulario ? 'Ocultar Formulario' : 'Agregar nueva Mascota' }}
+            </button>
+          </div>
+        <div class="col-lg-3"> <!-- Columna Dueño -->
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Buscar Dueño" [(ngModel)]="filterpost">
+          </div>
+        </div>
+        
+        <div class="col-lg-3"> <!-- Columna Tipo Animal -->
+          <div class="input-group mb-3">
+            <select class="form-control" [(ngModel)]="filterAnimal">
+                <option value="">Buscar Animal</option>
+                <option value="Perro">Perro</option>
+                <option value="Gato">Gato</option>
+                <option value="Tortuga">Tortuga</option>
+                <option value="Iguana">Iguana</option>
+                <!-- Y así sucesivamente -->
+            </select>
+          </div>
+        </div>
+        
+        <div class="col-lg-3"> <!-- Columna Mascota -->
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Buscar Raza" [(ngModel)]="filterMascota">
+          </div>
+        </div>
+        
+        
+      </div>
+      <br><br>
+      
+    <div class="row g-3">
+        
+        <!-- Parte Izquierda - Formulario -->
+        <div class="col-md-4" *ngIf="mostrarFormulario">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" class="text-dart">Agregar/Editar Historial</h5>
+
+                    <form [formGroup]="historialForm" (ngSubmit)="agregarHistorial()">
+                        <div class="form-group">
+                            <label for="duenio" class="text-dart">Nombre del propietario</label>
+                            <input type="text" class="form-control" id="duenio" name="duenio"
+                                formControlName="duenio" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="nombreMascota" class="text-dart">Nombre de la mascota</label>
+                            <input type="text" class="form-control" id="nombreMascota" name="nombreMascota"
+                                formControlName="nombreMascota" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tipoAnimal" class="text-dart">Tipo del Animal</label>
+                            <select class="form-control" id="tipoAnimal" name="tipoAnimal" formControlName="tipoAnimal" (change)="onAnimalSelected($event)" required>
+                              <option value="">Selecciona un Tipo de Animal</option>
+                              <option *ngFor="let animales of animales" [value]="animales.tipoAnimal">{{ animales.tipoAnimal }}</option>
+                            </select>
+                          </div>
+
+                        <div class="form-group">
+                            <label for="nombreRaza" class="text-dart">Raza del Animal</label>
+                            <select class="form-control" id="nombreRaza" name="nombreRaza" formControlName="nombreRaza" required>
+                              <option value="">Selecciona la Raza de animal</option>
+                              <option *ngFor="let raza of filteredRaza" [value]="raza.nombreRaza">{{ raza.nombreRaza }}</option>
+                            </select>
+                          </div>
+
+                        <div formArrayName="vacunas">
+                            <div *ngFor="let vacunaGroup of vacunas.controls; let i = index" class="form-group"
+                                [formGroupName]="i">
+                                <label class="text-dart">Vacuna {{ i + 1 }}</label>
+                                <select class="form-control" formControlName="nombreVacuna" required>
+                                    <option *ngFor="let vacuna of vacuna" [value]="vacuna.nombreVacuna">{{ vacuna.nombreVacuna }}</option>
+                                </select>
+                                <label class="text-dart">Fecha de Vacuna {{ i + 1 }}</label>
+                                <input type="date" class="form-control" id="fechaVacuna" name="fechaVacuna"
+                                formControlName="fechaVacuna" required />
+                            </div>
+                        </div>
+                        <div formArrayName="consultas">
+                            <div *ngFor="let consultaGroup of consultas.controls; let i = index" class="form-group"
+                                [formGroupName]="i">
+                                <label class="text-dart">Consulta {{ i + 1 }}</label>
+                                <input type="text" class="form-control" id="tipoConsulta" name="tipoConsulta"
+                                formControlName="tipoConsulta" required />
+                                <label class="text-dart">Observaciones</label>
+                                <input type="textbox" class="form-control" id="observaciones" name="observaciones"
+                                formControlName="observaciones" required />
+                            </div>
+                        </div>
+
+                        
+
+                        <button type="button" class="btn btn-primary" (click)="agregarVacuna()">
+                            Agregar Vacuna
+                        </button>
+                        <p></p>
+                        <button type="button" class="btn btn-primary" (click)="agregarConsulta()">
+                            Agregar Consulta
+                        </button>
+                        <br>
+
+                        <div class="btn-group mt-2">
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                            <button type="button" class="btn btn-success ms-2" (click)="actualizarHistorial()">
+                                Actualizar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Parte Derecha - Tabla -->
+        <!-- Parte Derecha - Tabla -->
+        
+        
+        <div [ngClass]="mostrarFormulario ? 'col-md-8' : 'col-md-12'">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr class="table-primary">
+                        <th scope="col">Dueño</th>
+                        <th scope="col">Nombre Mascota</th>
+                        <th scope="col">tipo de Animal</th>
+                        <th scope="col">Raza</th>
+                        <th scope="col">vacunas</th>
+                        <th scope="col">consultas</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="datosP-table-body">
+                    <tr *ngFor="let item of historial | filter: filterpost | filter: filterAnimal | filter: filterMascota">
+                        <td>{{ item.duenio }}</td>
+                        <td>{{ item.nombreMascota }}</td>
+                        <td>{{ item.tipoAnimal}}</td>
+                        <td>{{ item.nombreRaza}}</td>
+                        <td>
+                            <ul>
+                                <li *ngFor="let vacuna of item.vacunas">
+                                    Vacuna: {{ vacuna.nombreVacuna }} <br>
+                                    Fecha: {{ vacuna.fechaVacuna }}
+                                </li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li *ngFor="let consultas of item.consultas">
+                                    Tipo de consulta: {{ consultas.tipoConsulta }} <br>
+                                    Observaciones: {{ consultas.observaciones }}
+                                </li>
+                            </ul>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm ms-2 btn-info" (click)="editarHistorial(item)" (click)="toggleFormulario()">
+                                Agregar Vacuna
+                            </button>
+                            <br><br>
+                            <button class="btn btn-sm ms-2 btn-info" (click)="editarHistorial(item)" (click)="toggleFormulario()">
+                                Agregar Cita
+                            </button>
+                            <br><br>
+                            <button class="btn btn-sm ms-2 btn-primary" (click)="editarHistorial(item)" (click)="toggleFormulario()">
+                                Editar
+                            </button>
+                            <br><br>
+                            <button type="button" class="btn btn-danger btn-sm ms-2" (click)="eliminarHistorial(item._id)">
+                                Eliminar Historial
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/flatly/bootstrap.min.css"
+            integrity="sha384-qF/QmIAj5ZaYFAeQcrQ6bfVMAh4zZlrGwTPY7T/M+iTTLJqJBJjwwnsE5Y0mV7QK"
+            crossorigin="anonymous" />
+    </div>
+</div>

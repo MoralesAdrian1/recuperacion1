@@ -1,0 +1,83 @@
+
+<br>
+        <!-- Parte Derecha - Tabla -->
+        <!-- Parte Derecha - Tabla -->
+        
+        <div class="col-md-12">
+            
+            <div class="search-box">
+                <div class="search-container">
+                  <p>Buscar Mascotas por: </p>
+                  <div class="dropdown">
+                    <button class="dropbtn">Seleccionar Animal</button>
+                    <div class="dropdown-content">
+                      <button class="category-btn" (click)="cargarHistorial()">Todo</button>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <br> 
+            <button type="button" class="btn btn-success btn-sm ms-2" routerLink="/historial" >
+                <i class="fa fa-trash"> Agregar Nueva Mascota</i>
+            </button>
+            <br>
+            <br>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr class="table-primary">
+                        <th scope="col">Dueño</th>
+                        <th scope="col">Nombre Mascota</th>
+                        <th scope="col">Tipo de Animal</th>
+                        <th scope="col">Raza</th>
+                        <th scope="col">Historial de Vacunación</th>
+                        <th scope="col">Historial de Medico</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="datosP-table-body">
+                    <tr *ngFor="let item of historial">
+                        <td>{{ item.duenio }}</td>
+                        <td>{{ item.nombreMascota }}</td>
+                        <td>{{ item.tipoAnimal}}</td>
+                        <td>{{ item.nombreRaza}}</td>
+                        <td>
+                            <ul>
+                                <li *ngFor="let vacuna of item.vacunas">
+                                    Vacuna: {{ vacuna.nombreVacuna }} <br>
+                                    Fecha: {{ vacuna.fechaVacuna }}
+                                </li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li *ngFor="let consultas of item.consultas">
+                                    Tipo de consulta: {{ consultas.tipoConsulta }} <br>
+                                    Observaciones: {{ consultas.observaciones }}
+                                </li>
+                            </ul>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm ms-2 btn-info" routerLink="/historial" (click)="editarHistorial(item)">
+                                <i class="fa fa-edit">Agregar Cita Medica</i>
+                            </button> <br>
+                            <br>
+                            <button type="button" class="btn btn-primary btn-sm ms-2" routerLink="/historial">
+                                <i class="fa fa-trash"> Agregar Vacuna</i>
+                            </button>
+                            <br>
+                            <br>
+                            <button type="button" class="btn btn-danger btn-sm ms-2" (click)="eliminarHistorial(item._id)">
+                                <i class="fa fa-trash">Eliminar Registro</i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/flatly/bootstrap.min.css"
+            integrity="sha384-qF/QmIAj5ZaYFAeQcrQ6bfVMAh4zZlrGwTPY7T/M+iTTLJqJBJjwwnsE5Y0mV7QK"
+            crossorigin="anonymous" />
